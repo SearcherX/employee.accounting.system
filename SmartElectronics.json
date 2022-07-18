@@ -1,0 +1,103 @@
+{
+  "name": "Smart Electronics",
+  "departments": [
+    {
+      "name": "IT-отдел",
+      "employees": [
+        {
+          "account": {
+            "login": "VolodinDS",
+            "password": "root1983",
+            "accessLevel": "ADMIN"
+          },
+          "birthDate": "05.04.1983",
+          "gender": "MALE",
+          "contactNumber": "+79155973325",
+          "position": "Начальник",
+          "employmentDate": "25.03.2014",
+          "salary": 130000,
+          "fio": "Володин Дмитрий Сергеевич"
+        },
+        {
+          "account": {
+            "login": "MelnikovAG",
+            "password": "agmel238",
+            "accessLevel": "REDACTOR"
+          },
+          "birthDate": "23.08.1991",
+          "gender": "MALE",
+          "contactNumber": "+79257071345",
+          "position": "IT-специалист",
+          "employmentDate": "15.02.2018",
+          "salary": 70000,
+          "fio": "Мельников Андрей Генадьевич"
+        },        {
+          "account": {
+            "login": "ToporovSN",
+            "password": "topor_35",
+            "accessLevel": "REDACTOR"
+          },
+          "birthDate": "27.11.1990",
+          "gender": "MALE",
+          "contactNumber": "+79153131375",
+          "position": "IT-специалист",
+          "employmentDate": "13.05.2018",
+          "salary": 70000,
+          "fio": "Топоров Сергей Никиолаевич"
+        }
+      ]
+    },
+    {
+      "name": "Отдел продаж",
+      "employees": [
+        {
+          "account": {
+            "login": "VasilievNA",
+            "password": "BestDir83",
+            "accessLevel": "USER"
+          },
+          "birthDate": "10.09.1983",
+          "gender": "MALE",
+          "contactNumber": "+79235873145",
+          "position": "Консультант",
+          "employmentDate": "30.07.2015",
+          "salary": 150000,
+          "fio": "Васильев Николай Алексеевич"
+        },
+        {
+          "account": {
+            "login": "MorozovaEV",
+            "password": "673590",
+            "accessLevel": "USER"
+          },
+          "birthDate": "10.09.1997",
+          "gender": "FEMALE",
+          "contactNumber": "+79233823146",
+          "position": "Продавец",
+          "employmentDate": "23.08.2017",
+          "salary": 60000,
+          "fio": "Морозова Елена Васильевна"
+        }
+      ]
+    },
+    {
+      "name": "Отдел кадров",
+      "employees": [
+        {
+          "account": {
+            "login": "FrolovaEP",
+            "password": "SmartDir89",
+            "accessLevel": "USER"
+          },
+          "birthDate": "15.10.1989",
+          "gender": "FEMALE",
+          "contactNumber": "+79135973244",
+          "position": "Начальник",
+          "employmentDate": "25.08.2018",
+          "salary": 130000,
+          "fio": "Фролова Елена Петровна"
+        }
+      ]
+    }
+  ]
+}
