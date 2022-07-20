@@ -1,5 +1,6 @@
 package system.console;
 
+import system.structure.Department;
 import system.structure.Employee;
 import system.structure.Gender;
 import system.structure.Organization;
@@ -9,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class CompanyConsoleApp {
@@ -85,6 +87,7 @@ public class CompanyConsoleApp {
             System.out.println("2 - вывести отчет");
             if (accessLevel.ordinal() > 0) {
                 System.out.println("3 - управление списком сотрудников");
+                System.out.println("4 - управление списком отделов");
             }
 
             System.out.println("0 - выход");
@@ -94,6 +97,7 @@ public class CompanyConsoleApp {
             if (choice1 == 0)
                 return;
 
+            //меню управления поиском сотрудников
             if (choice1 == 1) {
                 System.out.println("Выберите по какому параметру искать:");
                 System.out.println("1 - ФИО");
@@ -129,10 +133,8 @@ public class CompanyConsoleApp {
                     System.out.println(reportMaker.createReportEmployees(org.getEmployeesMapByDepartment(choice3)));
                     System.out.println();
                 }
-
-            }
-
-            if (choice1 == 2) {
+            //меню вывода отчетов
+            } else if (choice1 == 2) {
                 System.out.println("Выберите какой вам нужен отчет:");
                 System.out.println("1 - структура организации");
                 System.out.println("2 - средняя зарплата по организации");
@@ -180,10 +182,8 @@ public class CompanyConsoleApp {
                     if (!askDestination(in, report))
                         return;
                 }
-
-            }
-
-            if (accessLevel.ordinal() > 0 && choice1 == 3) {
+            //меню управления списком сотрудников
+            } else if (accessLevel.ordinal() > 0 && choice1 == 3) {
                 System.out.println("Меню управления списком сотрудников:");
                 System.out.println("1 - изменить данные сотрудника");
                 if (accessLevel == AccessLevel.ADMIN) {
@@ -200,7 +200,7 @@ public class CompanyConsoleApp {
                 if (choice2 == 1) {
                     System.out.print("Введите логин сотрудника: ");
                     String empName = in.next();
-                    Employee foundEmployee = org.getEmployeeByLogin(empName);
+                    Employee foundEmployee = org.getAccount(empName);
 
                     if (foundEmployee == null)
                         System.out.println("Нет такого логина " + empName);
@@ -335,7 +335,7 @@ public class CompanyConsoleApp {
 
                                 foundEmployee.getAccount().setPassword(choice4);
                             } else if (accessLevel == AccessLevel.ADMIN && choice3 == 9) {
-                                System.out.print("Выберите права доступа (user, redactor): ");
+                                System.out.print("Выберите уровень доступа (user, redactor): ");
                                 String choice4 = in.next();
                                 AccessLevel accessLevel1 = AccessLevel.USER;
 
@@ -362,8 +362,195 @@ public class CompanyConsoleApp {
                                 return;
                         }
                     }
-                }
+                } else if (choice2 == 2 && accessLevel == AccessLevel.ADMIN) {
+                    System.out.println("Меню добавления сотрудника:");
 
+                    String newLogin;
+                    while (true) {
+                        System.out.print("Введите логин: ");
+                        newLogin = in.next();
+
+                        try {
+                            org.getAccount(newLogin);
+                            System.out.println("Логин " + newLogin + " уже используется");
+                        } catch (IllegalArgumentException ignored) {
+                            break;
+                        }
+                    }
+
+                    Department department;
+                    while (true) {
+                        System.out.print("Введите название отдела: ");
+                        in.nextLine();
+                        String choice3 = in.nextLine();
+
+                        try {
+                            department = org.getDepartmentByName(choice3);
+                            break;
+                        } catch (IllegalArgumentException ignored) {
+                            System.out.println("Ошибка. " + choice3 + " нет в базе");
+                        }
+                    }
+
+                    Employee emp = new Employee(newLogin);
+
+                    System.out.print("Введите пароль: ");
+                    String newPassword = in.next();
+                    emp.getAccount().setPassword(newPassword);
+
+                    System.out.print("Выберите уровень доступа (user, redactor): ");
+                    String choice4 = in.next();
+                    AccessLevel accessLevel1 = AccessLevel.USER;
+
+                    if (choice4.equals("redactor"))
+                        accessLevel1 = AccessLevel.REDACTOR;
+                    emp.getAccount().setAccessLevel(accessLevel1);
+
+                    System.out.print("Введите ФИО: ");
+                    in.nextLine();
+                    String newFIO = in.nextLine();
+                    emp.setFIO(newFIO);
+
+                    System.out.print("Введите дату рождения: ");
+                    String newBirthDate = in.next();
+                    emp.setBirthDate(newBirthDate);
+
+                    while(true) {
+                        System.out.print("Выберите пол (м/ж): ");
+                        String genderChoice = in.next();
+                        Gender gender = null;
+
+                        switch (genderChoice) {
+                            case "м" -> gender = Gender.MALE;
+                            case "ж" -> gender = Gender.FEMALE;
+                        }
+
+                        if (gender == null)
+                            System.out.println("Пол " + genderChoice + " не обнаружен в базе");
+                        else
+                            break;
+                    }
+
+                    System.out.print("Введите контактный номер: ");
+                    String newContactNumber = in.next();
+                    emp.setContactNumber(newContactNumber);
+
+                    while(true) {
+                        System.out.print("Введите должность: ");
+                        String newPosition = in.next();
+                        if (newPosition.equals("начальник") && department.getHeadOfDepartment() != null) {
+                            System.out.println("Должность начальника уже занята в " + department);
+                        } else {
+                            emp.setPosition(newPosition);
+                            break;
+                        }
+                    }
+
+                    emp.setEmploymentDate(LocalDate.now().format(Employee.FORMATTER));
+
+                    System.out.print("Введите зарплату: ");
+                    int newSalary = in.nextInt();
+                    emp.setSalary(newSalary);
+
+                    department.addEmployee(emp);
+                    System.out.println("Сотрудник " + emp.getFIO() + " добавлен в " + department);
+                } else if (choice2 == 3 && accessLevel == AccessLevel.ADMIN) {
+                    while (true) {
+                        System.out.print("Введите логин сотрудника для удаления: ");
+                        String delLogin = in.next();
+
+                        try {
+                            Employee delEmp = org.getAccount(delLogin);
+                            Department department = org.getDepartmentByLogin(delLogin);
+                            department.delEmployee(delEmp);
+                            System.out.println("Сотрудник " + delEmp.getFIO() + " с логином "
+                                    + delLogin + " удален из " + department);
+                            break;
+                        } catch (IllegalArgumentException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    }
+                }
+            //меню управления списком отделов
+            } else if (accessLevel.ordinal() > 0 && choice1 == 4) {
+                System.out.println("Меню управления списком отделов:");
+                System.out.println("1 - изменить название отдела");
+                if (accessLevel == AccessLevel.ADMIN) {
+                    System.out.println("2 - добавить отдел");
+                    System.out.println("3 - удалить отдел");
+                }
+                System.out.println("0 - выход");
+
+                int choice2 = in.nextInt();
+
+                if (choice2 == 0)
+                    return;
+
+                if (choice2 == 1) {
+                    Department department;
+                    in.nextLine();
+                    while (true) {
+                        System.out.print("Введите название отдела: ");
+                        String oldName = in.nextLine();
+                        try {
+                            department = org.getDepartmentByName(oldName);
+                            break;
+                        } catch (IllegalArgumentException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    }
+
+                    while (true) {
+                        System.out.print("Введите новое название отдела: ");
+                        String newName = in.nextLine();
+                        try {
+                            org.getDepartmentByName(newName);
+                            System.out.println("Название " + newName + " уже занято");
+                        } catch (IllegalArgumentException ex) {
+                            System.out.println("Название " + department + " изменено на " + newName);
+                            System.out.println();
+                            department.setName(newName);
+                            break;
+                        }
+                    }
+                //пункт меню добавления отдела
+                } else if (choice2 == 2 && accessLevel == AccessLevel.ADMIN) {
+                    in.nextLine();
+                    while (true) {
+                        System.out.print("Введите название отдела для добавления: ");
+                        String departmentName = in.nextLine();
+
+                        try {
+                            Department department = org.getDepartmentByName(departmentName);
+                            System.out.println(department + " уже есть в базе");
+                        } catch (IllegalArgumentException ignored) {
+                            System.out.println(departmentName + " добавлен в базу");
+                            org.addDepartment(new Department(departmentName));
+                            break;
+                        }
+                    }
+                //пункт меню удаления отдела
+                } else if (choice2 == 3 && accessLevel == AccessLevel.ADMIN) {
+                    in.nextLine();
+                    while (true) {
+                        System.out.print("Введите название отдела для удаления: ");
+                        String departmentName = in.nextLine();
+
+                        try {
+                            Department department = org.getDepartmentByName(departmentName);
+                            if (department.getEmployees().size() > 0) {
+                                System.out.println("В " + department + " есть сотрудники. " +
+                                        "Сначада сделайте им transfer в другие отделы");
+                                continue;
+                            }
+                            System.out.println(department + " удален из базы");
+                            org.delDepartment(department);
+                            break;
+                        } catch (IllegalArgumentException ex) {
+                            System.out.println(departmentName + " не найден в базе");
+                        }
+                    }
+                }
             }
         }
 

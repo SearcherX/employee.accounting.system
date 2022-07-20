@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
 public class Department {
-    private final String name;
+    private String name;
     private final ArrayList<Employee> employees = new ArrayList<>();
 
     public Department(@JsonProperty("name") String name) {
@@ -24,10 +24,14 @@ public class Department {
     @JsonIgnore
     public Employee getHeadOfDepartment() {
         for (Employee employee: employees) {
-            if (employee.getPosition().equals("Начальник"))
+            if (employee.getPosition().equalsIgnoreCase("начальник"))
                 return employee;
         }
         return null;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int calcAverageSalary() {

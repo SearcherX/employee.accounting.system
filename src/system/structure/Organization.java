@@ -37,6 +37,26 @@ public class Organization {
         departments.remove(index);
     }
 
+    //метод возврата отдела по имени
+    public Department getDepartmentByName(String departmentName) {
+        for (Department department: departments) {
+            if (department.getName().equalsIgnoreCase(departmentName))
+                return department;
+        }
+        throw new IllegalArgumentException("Ошибка. Нет такого отдела в базе");
+    }
+
+    //метод возврата отдела по логину работника
+    public Department getDepartmentByLogin(String loginName) {
+        for (Department department: departments) {
+            for (Employee employee: department.getEmployees()) {
+                if (employee.getAccount().getLogin().equals(loginName))
+                    return department;
+            }
+        }
+        throw new IllegalArgumentException("Ошибка. Сотрудника нет в базе");
+    }
+
     //метод возврата информации о сотруднике по логину
     public Employee getAccount(String login) {
         for (Department department: departments) {
@@ -46,7 +66,7 @@ public class Organization {
             }
         }
 
-        return null;
+        throw new IllegalArgumentException("Ошибка. Нет такого логина в базе");
     }
 
     //метод получения списка средних зарплат по отделам
@@ -121,26 +141,6 @@ public class Organization {
             return null;
 
         return res;
-    }
-
-    //метод возврата отдела по имени
-    public Department getDepartmentByName(String departmentName) {
-        for (Department department: departments) {
-            if (department.getName().equals(departmentName))
-                return department;
-        }
-        return null;
-    }
-
-    //метод возврата сотрудника по логину
-    public Employee getEmployeeByLogin(String login) {
-        for (Department department: departments) {
-            for (Employee employee: department.getEmployees()) {
-                if (employee.getAccount().getLogin().equals(login))
-                    return employee;
-            }
-        }
-        return null;
     }
 
     //метод возврата сотрудников по должности
