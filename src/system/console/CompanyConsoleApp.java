@@ -56,12 +56,38 @@ public class CompanyConsoleApp {
         return true;
     }
 
+    //метод, запрашивайший куда вывести отчет и выводящий его
+    private boolean askSaveToFile(Scanner in, String report) {
+        System.out.println("Сохранить информацию в файл? (да/нет)");
+
+        String choice3 = in.next();
+
+        if (choice3.equals("0"))
+            return false;
+
+        if (choice3.equalsIgnoreCase("да")) {
+            System.out.print("Введите название файла: ");
+            String choice4 = in.next();
+
+            File file = new File(choice4);
+            try {
+                file.createNewFile();
+                writeReportToFile(choice4, report);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("Информация записана в файл " + choice4);
+        }
+        return true;
+    }
+
     public void start() {
         Scanner in = new Scanner(System.in);
 
         System.out.print("Введите логин: ");
         String login = in.next();
-        Employee employee = org.getAccount(login);
+        Employee employee = org.getEmployeeByLogin(login);
 
         if (employee == null) {
             System.out.println("Логина " + login + " нет в базе");
@@ -114,7 +140,13 @@ public class CompanyConsoleApp {
                     System.out.print("Введите ФИО: ");
                     in.nextLine();
                     String choice3 = in.nextLine();
-                    System.out.println(reportMaker.createReportEmployees(org.getEmployeesMapByFIO(choice3)));
+                    String report = reportMaker.createReportEmployees(
+                            org.getEmployeesMapByFIO(choice3), accessLevel);
+
+                    System.out.println(report);
+                    if (!askSaveToFile(in, report))
+                        return;
+
                     System.out.println();
                 }
 
@@ -122,7 +154,13 @@ public class CompanyConsoleApp {
                     System.out.print("Введите должность: ");
                     in.nextLine();
                     String choice3 = in.nextLine();
-                    System.out.println(reportMaker.createReportEmployees(org.getEmployeesMapByPosition(choice3)));
+                    String report = reportMaker.createReportEmployees(
+                            org.getEmployeesMapByPosition(choice3), accessLevel);
+
+                    System.out.println(report);
+                    if (!askSaveToFile(in, report))
+                        return;
+
                     System.out.println();
                 }
 
@@ -130,7 +168,13 @@ public class CompanyConsoleApp {
                     System.out.print("Введите название отдела: ");
                     in.nextLine();
                     String choice3 = in.nextLine();
-                    System.out.println(reportMaker.createReportEmployees(org.getEmployeesMapByDepartment(choice3)));
+                    String report = reportMaker.createReportEmployees(
+                            org.getEmployeesMapByDepartment(choice3), accessLevel);
+
+                    System.out.println(report);
+                    if (!askSaveToFile(in, report))
+                        return;
+
                     System.out.println();
                 }
             //меню вывода отчетов
@@ -186,9 +230,11 @@ public class CompanyConsoleApp {
             } else if (accessLevel.ordinal() > 0 && choice1 == 3) {
                 System.out.println("Меню управления списком сотрудников:");
                 System.out.println("1 - изменить данные сотрудника");
+                System.out.println("2 - перевод сотрудника в другой отдел");
                 if (accessLevel == AccessLevel.ADMIN) {
-                    System.out.println("2 - добавить данные сотрудника");
-                    System.out.println("3 - удалить данные сотрудника");
+                    System.out.println("3 - перевод всех сотрудников в другой отдел");
+                    System.out.println("4 - добавить данные сотрудника");
+                    System.out.println("5 - удалить данные сотрудника");
                 }
                 System.out.println("0 - выход");
 
@@ -200,7 +246,7 @@ public class CompanyConsoleApp {
                 if (choice2 == 1) {
                     System.out.print("Введите логин сотрудника: ");
                     String empName = in.next();
-                    Employee foundEmployee = org.getAccount(empName);
+                    Employee foundEmployee = org.getEmployeeByLogin(empName);
 
                     if (foundEmployee == null)
                         System.out.println("Нет такого логина " + empName);
@@ -288,6 +334,13 @@ public class CompanyConsoleApp {
                             } else if (choice3 == 5) {
                                 System.out.print("Введите должность: ");
                                 String choice4 = in.next();
+                                Department department = org.getDepartmentByLogin(empName);
+
+                                if (choice4.equalsIgnoreCase("начальник")
+                                        && department.getHeadOfDepartment() != null) {
+                                    System.out.println("В " + department + " уже есть начальник");
+                                    break;
+                                }
 
                                 System.out.println("Должность "
                                         + foundEmployee.getPosition()
@@ -362,7 +415,51 @@ public class CompanyConsoleApp {
                                 return;
                         }
                     }
-                } else if (choice2 == 2 && accessLevel == AccessLevel.ADMIN) {
+                //перевод сотрудника в другой отдел
+                } else if (choice2 == 2) {
+                    System.out.println("Перевод сотрудника в другой отдел");
+
+                    while (true) {
+                        try {
+                            System.out.print("Введите логин сотрудника: ");
+                            String loginForTransfer = in.next();
+
+                            in.nextLine();
+                            System.out.print("Введите название отдела: ");
+                            String toDepartmentName = in.nextLine();
+
+                            org.transfer(loginForTransfer, toDepartmentName);
+                            System.out.println("Сотрудник с логином " + loginForTransfer
+                                    + " переведён в " + toDepartmentName);
+                            break;
+                        } catch (IllegalArgumentException ex) {
+                            System.out.println("Трансфер не удался");
+                            System.out.println(ex.getMessage());
+                        }
+                    }
+                //добавить сотрудника
+                } else if (choice2 == 3 && accessLevel == AccessLevel.ADMIN) {
+                    System.out.println("Перевод всех сотрудников их одного отдела в другой отдел");
+
+                    in.nextLine();
+                    while (true) {
+                        try {
+                            System.out.print("Введите название отдела, откуда сделать перевод: ");
+                            String fromDepartmentName = in.nextLine();
+
+                            System.out.print("Введите название отдела, куда сделать перевод: ");
+                            String toDepartmentName = in.nextLine();
+
+                            org.transferAll(fromDepartmentName, toDepartmentName);
+                            System.out.println("Все сотрудники из " + fromDepartmentName
+                                    + " переведены в " + toDepartmentName);
+                            break;
+                        } catch (IllegalArgumentException ex) {
+                            System.out.println("Трансфер не удался");
+                            System.out.println(ex.getMessage());
+                        }
+                    }
+                }else if (choice2 == 4 && accessLevel == AccessLevel.ADMIN) {
                     System.out.println("Меню добавления сотрудника:");
 
                     String newLogin;
@@ -371,7 +468,7 @@ public class CompanyConsoleApp {
                         newLogin = in.next();
 
                         try {
-                            org.getAccount(newLogin);
+                            org.getEmployeeByLogin(newLogin);
                             System.out.println("Логин " + newLogin + " уже используется");
                         } catch (IllegalArgumentException ignored) {
                             break;
@@ -438,7 +535,7 @@ public class CompanyConsoleApp {
                     while(true) {
                         System.out.print("Введите должность: ");
                         String newPosition = in.next();
-                        if (newPosition.equals("начальник") && department.getHeadOfDepartment() != null) {
+                        if (newPosition.equalsIgnoreCase("начальник") && department.getHeadOfDepartment() != null) {
                             System.out.println("Должность начальника уже занята в " + department);
                         } else {
                             emp.setPosition(newPosition);
@@ -454,13 +551,13 @@ public class CompanyConsoleApp {
 
                     department.addEmployee(emp);
                     System.out.println("Сотрудник " + emp.getFIO() + " добавлен в " + department);
-                } else if (choice2 == 3 && accessLevel == AccessLevel.ADMIN) {
+                } else if (choice2 == 5 && accessLevel == AccessLevel.ADMIN) {
                     while (true) {
                         System.out.print("Введите логин сотрудника для удаления: ");
                         String delLogin = in.next();
 
                         try {
-                            Employee delEmp = org.getAccount(delLogin);
+                            Employee delEmp = org.getEmployeeByLogin(delLogin);
                             Department department = org.getDepartmentByLogin(delLogin);
                             department.delEmployee(delEmp);
                             System.out.println("Сотрудник " + delEmp.getFIO() + " с логином "
@@ -540,7 +637,7 @@ public class CompanyConsoleApp {
                             Department department = org.getDepartmentByName(departmentName);
                             if (department.getEmployees().size() > 0) {
                                 System.out.println("В " + department + " есть сотрудники. " +
-                                        "Сначада сделайте им transfer в другие отделы");
+                                        "Сначала переведите их в другие отделы");
                                 continue;
                             }
                             System.out.println(department + " удален из базы");

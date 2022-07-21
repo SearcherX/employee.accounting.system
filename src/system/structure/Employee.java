@@ -91,4 +91,10 @@ public class Employee {
                 + ", должность: " + position;
 
     }
+
+    public String toFullString() {
+        return this + ", дата приёма на работу: " + employmentDate.format(FORMATTER)
+                + ", логин: " + getAccount().getLogin();
+
+    }
 }

@@ -58,7 +58,7 @@ public class Organization {
     }
 
     //метод возврата информации о сотруднике по логину
-    public Employee getAccount(String login) {
+    public Employee getEmployeeByLogin(String login) {
         for (Department department: departments) {
             for (Employee employee: department.getEmployees()) {
                 if (employee.getAccount().getLogin().equals(login))
@@ -67,6 +67,38 @@ public class Organization {
         }
 
         throw new IllegalArgumentException("Ошибка. Нет такого логина в базе");
+    }
+
+    //метод перевода сотрудника из одного отдела в другой
+    public void transfer(Employee emp, Department toDepartment) {
+        Department fromDepartment = getDepartmentByLogin(emp.getAccount().getLogin());
+
+        fromDepartment.delEmployee(emp);
+        //если сотрудник-начальник, то нужно сбросить должность, чтобы не было
+        //коллизий в новом отделе
+        if (emp.getPosition().equalsIgnoreCase("начальник"))
+            emp.setPosition(null);
+        toDepartment.addEmployee(emp);
+    }
+
+    //метод перевода сотрудника из одного отдела в другой
+    public void transfer(String login, String toDepartmentName) {
+        Employee emp = getEmployeeByLogin(login);
+        Department toDepartment = getDepartmentByName(toDepartmentName);
+
+        transfer(emp, toDepartment);
+    }
+
+    //метод перевода всех сотрудников в другой отдел
+    public void transferAll(String fromDepartmentName, String toDepartmentName) {
+        Department fromDepartment = getDepartmentByName(fromDepartmentName);
+        Department toDepartment = getDepartmentByName(toDepartmentName);
+
+        for (int i = 0; i < fromDepartment.getEmployees().size(); i++) {
+            transfer(fromDepartment.getEmployees().get(i), toDepartment);
+            i--;
+        }
+
     }
 
     //метод получения списка средних зарплат по отделам
@@ -149,7 +181,7 @@ public class Organization {
         Department department = getDepartmentByName(departmentName);
 
         if (department != null)
-            res.put(departmentName, department.getEmployees());
+            res.put(department.getName(), department.getEmployees());
         else
             return null;
 

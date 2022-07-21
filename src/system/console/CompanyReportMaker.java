@@ -2,6 +2,7 @@ package system.console;
 
 import system.structure.Employee;
 import system.structure.Organization;
+import system.structure.user.AccessLevel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,12 +63,12 @@ public class CompanyReportMaker {
     }
 
     //метод создания отчета вывода сотрудников из словаря
-    public String createReportEmployees(HashMap<String, ArrayList<Employee>> info) {
+    public String createReportEmployees(HashMap<String, ArrayList<Employee>> info, AccessLevel access) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, ArrayList<Employee>> pair : info.entrySet()) {
             sb.append(pair.getKey()).append(":").append("\n");
             for (Employee employee : pair.getValue()) {
-                sb.append(employee).append("\n");
+                sb.append((access == AccessLevel.USER ? employee: employee.toFullString())).append("\n");
             }
         }
         sb.deleteCharAt(sb.length() - 1);

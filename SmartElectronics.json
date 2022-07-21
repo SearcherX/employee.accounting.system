@@ -31,7 +31,8 @@
           "employmentDate": "15.02.2018",
           "salary": 70000,
           "fio": "Мельников Андрей Генадьевич"
-        },        {
+        },
+        {
           "account": {
             "login": "ToporovSN",
             "password": "topor_35",
@@ -96,6 +97,48 @@
           "employmentDate": "25.08.2018",
           "salary": 130000,
           "fio": "Фролова Елена Петровна"
+        },
+        {
+          "account": {
+            "login": "trex",
+            "password": "dsagfdg",
+            "accessLevel": "USER"
+          },
+          "birthDate": "21.03.2000",
+          "gender": "MALE",
+          "contactNumber": "+795436545",
+          "position": "бухгалтер",
+          "employmentDate": "24.02.2019",
+          "salary": 50000,
+          "fio": "Антонов Сергей Дмитриевич"
+        },
+        {
+          "account": {
+            "login": "fdsf",
+            "password": "dsaffsagfdg",
+            "accessLevel": "USER"
+          },
+          "birthDate": "21.03.1999",
+          "gender": "FEMALE",
+          "contactNumber": "+76678687967",
+          "position": "бухгалтер",
+          "employmentDate": "23.03.2015",
+          "salary": 50000,
+          "fio": "Дружкова Ольга Генадьевна"
+        },
+        {
+          "account": {
+            "login": "prank",
+            "password": "dasdasd",
+            "accessLevel": "USER"
+          },
+          "birthDate": "11.07.2001",
+          "gender": "MALE",
+          "contactNumber": "+74535435",
+          "position": "секретарь",
+          "employmentDate": "25.03.2018",
+          "salary": 50000,
+          "fio": "Прокопенко Оксана Серьгеевна"
         }
       ]
     }
