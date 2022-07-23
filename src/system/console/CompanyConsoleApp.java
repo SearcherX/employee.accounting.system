@@ -23,14 +23,6 @@ public class CompanyConsoleApp {
         reportMaker = new CompanyReportMaker(org);
     }
 
-    //метод создания файла и записи отчета в него
-    private void createFileAndWriteReport(String fileName, String report) {
-        File file = new File(fileName);
-        //if (file.createNewFile())
-
-        writeReportToFile(fileName, report);
-    }
-
     //метод, запрашивайший куда вывести отчет и выводящий его
     private boolean askDestination(Scanner in, String report) {
         System.out.println("Выберите куда вывести отчет:");
@@ -52,7 +44,7 @@ public class CompanyConsoleApp {
             System.out.print("Введите название файла: ");
             String choice4 = in.next();
 
-            createFileAndWriteReport(choice4, report);
+            writeReportToFile(choice4, report);
 
             System.out.println("Отчет записан в файл " + choice4);
         }
@@ -72,7 +64,7 @@ public class CompanyConsoleApp {
             System.out.print("Введите название файла: ");
             String choice4 = in.next();
 
-            createFileAndWriteReport(choice4, report);
+            writeReportToFile(choice4, report);
 
             System.out.println("Информация записана в файл " + choice4);
         }
