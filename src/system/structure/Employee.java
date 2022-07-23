@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Employee {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    public static final String HEAD_POSITION = "начальник";
 
     private final UserAccount account;
     private String FIO;

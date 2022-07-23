@@ -1,4 +1,4 @@
-package system.console;
+package system.report;
 
 import system.structure.Employee;
 import system.structure.Organization;
@@ -8,12 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CompanyReportMaker {
-    private final Organization org;
-
-    public CompanyReportMaker(Organization org) {
-        this.org = org;
-    }
+public record CompanyReportMaker(Organization org) {
 
     //метод создания отчета о средней зарплате по отделам
     public String createReportAverageSalaries() {
@@ -50,7 +45,7 @@ public class CompanyReportMaker {
 
     //метод создания отчета о ТОП-10 самых преданных сотрудников
     public String createReportTop10LoyalEmployees() {
-        StringBuilder sb = new StringBuilder("ТОП-10 самых дорогих сотрудников по зарплате:\n");
+        StringBuilder sb = new StringBuilder("ТОП-10 самых преданных сотрудников по количеству лет работы в организации:\n");
         ArrayList<Employee> top10 = org.getTop10LoyalEmployees();
 
         for (int i = 0; i < top10.size(); i++) {
@@ -68,7 +63,7 @@ public class CompanyReportMaker {
         for (Map.Entry<String, ArrayList<Employee>> pair : info.entrySet()) {
             sb.append(pair.getKey()).append(":").append("\n");
             for (Employee employee : pair.getValue()) {
-                sb.append((access == AccessLevel.USER ? employee: employee.toFullString())).append("\n");
+                sb.append((access == AccessLevel.USER ? employee : employee.toFullString())).append("\n");
             }
         }
         sb.deleteCharAt(sb.length() - 1);

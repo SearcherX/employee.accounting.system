@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Department {
     private String name;
@@ -23,7 +24,7 @@ public class Department {
 
     @JsonIgnore
     public Employee getHeadOfDepartment() {
-        for (Employee employee: employees) {
+        for (Employee employee : employees) {
             if (employee.getPosition().equalsIgnoreCase("начальник"))
                 return employee;
         }
@@ -36,11 +37,11 @@ public class Department {
 
     public int calcAverageSalary() {
         double avg = 0.0;
-        for (Employee employee: employees) {
+        for (Employee employee : employees) {
             avg += employee.getSalary() * 1.0 / employees.size();
         }
 
-        return (int)Math.round(avg);
+        return (int) Math.round(avg);
     }
 
     public void addEmployee(Employee employee) {
@@ -53,6 +54,30 @@ public class Department {
 
     public void delEmployee(int index) {
         employees.remove(index);
+    }
+
+    //метод поиска сотрудника по логину
+    public Employee getEmployeeByLogin(String loginName) {
+        for (Employee employee : getEmployees()) {
+            if (employee.getAccount().getLogin().equals(loginName))
+                return employee;
+        }
+
+        return null;
+    }
+
+    //метод возврата сотрудников по фио
+    public ArrayList<Employee> getEmployeesByFIO(String FIO) {
+        return getEmployees().stream()
+                .filter(employee -> employee.getFIO().equals(FIO))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    //метод возврата сотрудников по должности
+    public ArrayList<Employee> getEmployeesByPosition(String position) {
+        return getEmployees().stream()
+                .filter(employee -> employee.getPosition().equals(position))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

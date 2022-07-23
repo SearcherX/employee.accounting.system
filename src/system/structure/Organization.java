@@ -1,8 +1,6 @@
 package system.structure;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import system.structure.Department;
-import system.structure.Employee;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,30 +41,28 @@ public class Organization {
             if (department.getName().equalsIgnoreCase(departmentName))
                 return department;
         }
-        throw new IllegalArgumentException("Ошибка. Нет такого отдела в базе");
+        return null;
     }
 
     //метод возврата отдела по логину работника
     public Department getDepartmentByLogin(String loginName) {
         for (Department department: departments) {
-            for (Employee employee: department.getEmployees()) {
-                if (employee.getAccount().getLogin().equals(loginName))
-                    return department;
-            }
+            Employee employee = department.getEmployeeByLogin(loginName);
+            if (employee != null)
+                return department;
         }
-        throw new IllegalArgumentException("Ошибка. Сотрудника нет в базе");
+        return null;
     }
 
     //метод возврата информации о сотруднике по логину
-    public Employee getEmployeeByLogin(String login) {
+    public Employee getEmployeeByLogin(String loginName) {
         for (Department department: departments) {
-            for (Employee employee: department.getEmployees()) {
-                if (employee.getAccount().getLogin().equals(login))
-                    return employee;
-            }
+            Employee employee = department.getEmployeeByLogin(loginName);
+            if (employee != null)
+                return employee;
         }
 
-        throw new IllegalArgumentException("Ошибка. Нет такого логина в базе");
+        return null;
     }
 
     //метод перевода сотрудника из одного отдела в другой
@@ -76,7 +72,7 @@ public class Organization {
         fromDepartment.delEmployee(emp);
         //если сотрудник-начальник, то нужно сбросить должность, чтобы не было
         //коллизий в новом отделе
-        if (emp.getPosition().equalsIgnoreCase("начальник"))
+        if (emp.getPosition().equalsIgnoreCase(Employee.HEAD_POSITION))
             emp.setPosition(null);
         toDepartment.addEmployee(emp);
     }
@@ -84,7 +80,12 @@ public class Organization {
     //метод перевода сотрудника из одного отдела в другой
     public void transfer(String login, String toDepartmentName) {
         Employee emp = getEmployeeByLogin(login);
+        if (emp == null)
+            throw new IllegalArgumentException("Ошибка. Сотрудник отсутсвует в базе");
+
         Department toDepartment = getDepartmentByName(toDepartmentName);
+        if (toDepartment == null)
+            throw new IllegalArgumentException("Ошибка. Отдел отсутсвует в базе");
 
         transfer(emp, toDepartment);
     }
@@ -144,9 +145,7 @@ public class Organization {
         HashMap<String, ArrayList<Employee>> res = new HashMap<>();
 
         for (Department department: departments) {
-            ArrayList<Employee> employees =  department.getEmployees().stream()
-                    .filter(employee -> employee.getFIO().equals(FIO))
-                    .collect(Collectors.toCollection(ArrayList::new));
+            ArrayList<Employee> employees =  department.getEmployeesByFIO(FIO);
             if (employees.size() > 0)
                 res.put(department.getName(), employees);
         }
@@ -162,9 +161,7 @@ public class Organization {
         HashMap<String, ArrayList<Employee>> res = new HashMap<>();
 
         for (Department department: departments) {
-            ArrayList<Employee> employees =  department.getEmployees().stream()
-                    .filter(employee -> employee.getPosition().equals(position))
-                    .collect(Collectors.toCollection(ArrayList::new));
+            ArrayList<Employee> employees =  department.getEmployeesByPosition(position);
             if (employees.size() > 0)
                 res.put(department.getName(), employees);
         }

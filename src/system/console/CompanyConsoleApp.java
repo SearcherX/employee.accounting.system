@@ -1,5 +1,6 @@
 package system.console;
 
+import system.report.CompanyReportMaker;
 import system.structure.Department;
 import system.structure.Employee;
 import system.structure.Gender;
@@ -14,12 +15,20 @@ import java.time.LocalDate;
 import java.util.Scanner;
 
 public class CompanyConsoleApp {
-    private Organization org;
+    private final Organization org;
     private final CompanyReportMaker reportMaker;
 
     public CompanyConsoleApp(Organization org) {
         this.org = org;
         reportMaker = new CompanyReportMaker(org);
+    }
+
+    //метод создания файла и записи отчета в него
+    private void createFileAndWriteReport(String fileName, String report) {
+        File file = new File(fileName);
+        //if (file.createNewFile())
+
+        writeReportToFile(fileName, report);
     }
 
     //метод, запрашивайший куда вывести отчет и выводящий его
@@ -32,7 +41,7 @@ public class CompanyConsoleApp {
         int choice3 = in.nextInt();
 
         if (choice3 == 0)
-            return false;
+            return true;
 
         if (choice3 == 1) {
             System.out.println(report);
@@ -43,17 +52,11 @@ public class CompanyConsoleApp {
             System.out.print("Введите название файла: ");
             String choice4 = in.next();
 
-            File file = new File(choice4);
-            try {
-                file.createNewFile();
-                writeReportToFile(choice4, report);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            createFileAndWriteReport(choice4, report);
 
             System.out.println("Отчет записан в файл " + choice4);
         }
-        return true;
+        return false;
     }
 
     //метод, запрашивайший куда вывести отчет и выводящий его
@@ -63,23 +66,17 @@ public class CompanyConsoleApp {
         String choice3 = in.next();
 
         if (choice3.equals("0"))
-            return false;
+            return true;
 
         if (choice3.equalsIgnoreCase("да")) {
             System.out.print("Введите название файла: ");
             String choice4 = in.next();
 
-            File file = new File(choice4);
-            try {
-                file.createNewFile();
-                writeReportToFile(choice4, report);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            createFileAndWriteReport(choice4, report);
 
             System.out.println("Информация записана в файл " + choice4);
         }
-        return true;
+        return false;
     }
 
     public void start() {
@@ -144,7 +141,7 @@ public class CompanyConsoleApp {
                                 org.getEmployeesMapByFIO(choice3), accessLevel);
 
                         System.out.println(report);
-                        if (!askSaveToFile(in, report))
+                        if (askSaveToFile(in, report))
                             return;
 
                         System.out.println();
@@ -158,7 +155,7 @@ public class CompanyConsoleApp {
                                 org.getEmployeesMapByPosition(choice3), accessLevel);
 
                         System.out.println(report);
-                        if (!askSaveToFile(in, report))
+                        if (askSaveToFile(in, report))
                             return;
 
                         System.out.println();
@@ -172,7 +169,7 @@ public class CompanyConsoleApp {
                                 org.getEmployeesMapByDepartment(choice3), accessLevel);
 
                         System.out.println(report);
-                        if (!askSaveToFile(in, report))
+                        if (askSaveToFile(in, report))
                             return;
 
                         System.out.println();
@@ -195,35 +192,35 @@ public class CompanyConsoleApp {
                     if (choice2 == 1) {
                         String report = org.toFullString();
                         //спросить куда вывести отчет и вывести его
-                        if (!askDestination(in, report))
+                        if (askDestination(in, report))
                             return;
                     }
 
                     if (choice2 == 2) {
                         String report = reportMaker.createReportAverageSalary();
                         //спросить куда вывести отчет и вывести его
-                        if (!askDestination(in, report))
+                        if (askDestination(in, report))
                             return;
                     }
 
                     if (choice2 == 3) {
                         String report = reportMaker.createReportAverageSalaries();
                         //спросить куда вывести отчет и вывести его
-                        if (!askDestination(in, report))
+                        if (askDestination(in, report))
                             return;
                     }
 
                     if (choice2 == 4) {
                         String report = reportMaker.createReportTop10ExpensiveEmployees();
                         //спросить куда вывести отчет и вывести его
-                        if (!askDestination(in, report))
+                        if (askDestination(in, report))
                             return;
                     }
 
                     if (choice2 == 5) {
                         String report = reportMaker.createReportTop10LoyalEmployees();
                         //спросить куда вывести отчет и вывести его
-                        if (!askDestination(in, report))
+                        if (askDestination(in, report))
                             return;
                     }
                     //меню управления списком сотрудников
@@ -336,7 +333,7 @@ public class CompanyConsoleApp {
                                     String choice4 = in.next();
                                     Department department = org.getDepartmentByLogin(empName);
 
-                                    if (choice4.equalsIgnoreCase("начальник")
+                                    if (choice4.equalsIgnoreCase(Employee.HEAD_POSITION)
                                             && department.getHeadOfDepartment() != null) {
                                         System.out.println("В " + department + " уже есть начальник");
                                         break;
@@ -467,12 +464,10 @@ public class CompanyConsoleApp {
                             System.out.print("Введите логин: ");
                             newLogin = in.next();
 
-                            try {
-                                org.getEmployeeByLogin(newLogin);
+                            if (org.getEmployeeByLogin(newLogin) != null)
                                 System.out.println("Логин " + newLogin + " уже используется");
-                            } catch (IllegalArgumentException ignored) {
+                            else
                                 break;
-                            }
                         }
 
                         Department department;
@@ -481,12 +476,11 @@ public class CompanyConsoleApp {
                             in.nextLine();
                             String choice3 = in.nextLine();
 
-                            try {
-                                department = org.getDepartmentByName(choice3);
+                            department = org.getDepartmentByName(choice3);
+                            if (department != null)
                                 break;
-                            } catch (IllegalArgumentException ignored) {
+                            else
                                 System.out.println("Ошибка. " + choice3 + " нет в базе");
-                            }
                         }
 
                         Employee emp = new Employee(newLogin);
@@ -535,7 +529,7 @@ public class CompanyConsoleApp {
                         while (true) {
                             System.out.print("Введите должность: ");
                             String newPosition = in.next();
-                            if (newPosition.equalsIgnoreCase("начальник") && department.getHeadOfDepartment() != null) {
+                            if (newPosition.equalsIgnoreCase(Employee.HEAD_POSITION) && department.getHeadOfDepartment() != null) {
                                 System.out.println("Должность начальника уже занята в " + department);
                             } else {
                                 emp.setPosition(newPosition);
@@ -556,16 +550,21 @@ public class CompanyConsoleApp {
                             System.out.print("Введите логин сотрудника для удаления: ");
                             String delLogin = in.next();
 
-                            try {
-                                Employee delEmp = org.getEmployeeByLogin(delLogin);
-                                Department department = org.getDepartmentByLogin(delLogin);
-                                department.delEmployee(delEmp);
-                                System.out.println("Сотрудник " + delEmp.getFIO() + " с логином "
-                                        + delLogin + " удален из " + department);
-                                break;
-                            } catch (IllegalArgumentException ex) {
-                                System.out.println(ex.getMessage());
+                            Employee delEmp = org.getEmployeeByLogin(delLogin);
+                            if (delEmp == null) {
+                                System.out.println("Логин " + delLogin + " не обнаружен в базе");
+                                continue;
                             }
+
+                            Department department = org.getDepartmentByLogin(delLogin);
+                            if (department == null) {
+                                System.out.println(delLogin + " не обнаружен в базе");
+                                continue;
+                            }
+                            department.delEmployee(delEmp);
+                            System.out.println("Сотрудник " + delEmp.getFIO() + " с логином "
+                                    + delLogin + " удален из " + department);
+                            break;
                         }
                     }
                     //меню управления списком отделов
@@ -589,21 +588,20 @@ public class CompanyConsoleApp {
                         while (true) {
                             System.out.print("Введите название отдела: ");
                             String oldName = in.nextLine();
-                            try {
-                                department = org.getDepartmentByName(oldName);
+                            department = org.getDepartmentByName(oldName);
+                            if (department == null)
+                                System.out.println(oldName + " не обнаружен в базе");
+                            else
                                 break;
-                            } catch (IllegalArgumentException ex) {
-                                System.out.println(ex.getMessage());
-                            }
                         }
 
                         while (true) {
                             System.out.print("Введите новое название отдела: ");
                             String newName = in.nextLine();
-                            try {
-                                org.getDepartmentByName(newName);
+                            Department newDep = org.getDepartmentByName(newName);
+                            if (newDep != null) {
                                 System.out.println("Название " + newName + " уже занято");
-                            } catch (IllegalArgumentException ex) {
+                            } else {
                                 System.out.println("Название " + department + " изменено на " + newName);
                                 System.out.println();
                                 department.setName(newName);
@@ -617,10 +615,10 @@ public class CompanyConsoleApp {
                             System.out.print("Введите название отдела для добавления: ");
                             String departmentName = in.nextLine();
 
-                            try {
-                                Department department = org.getDepartmentByName(departmentName);
+                            Department department = org.getDepartmentByName(departmentName);
+                            if (department != null) {
                                 System.out.println(department + " уже есть в базе");
-                            } catch (IllegalArgumentException ignored) {
+                            } else {
                                 System.out.println(departmentName + " добавлен в базу");
                                 org.addDepartment(new Department(departmentName));
                                 break;
@@ -633,18 +631,16 @@ public class CompanyConsoleApp {
                             System.out.print("Введите название отдела для удаления: ");
                             String departmentName = in.nextLine();
 
-                            try {
-                                Department department = org.getDepartmentByName(departmentName);
-                                if (department.getEmployees().size() > 0) {
-                                    System.out.println("В " + department + " есть сотрудники. " +
-                                            "Сначала переведите их в другие отделы");
-                                    continue;
-                                }
+                            Department department = org.getDepartmentByName(departmentName);
+                            if (department == null) {
+                                System.out.println(departmentName + " не найден в базе");
+                            } else if (department.getEmployees().size() > 0) {
+                                System.out.println("В " + department + " есть сотрудники. " +
+                                        "Сначала переведите их в другие отделы");
+                            } else {
                                 System.out.println(department + " удален из базы");
                                 org.delDepartment(department);
                                 break;
-                            } catch (IllegalArgumentException ex) {
-                                System.out.println(departmentName + " не найден в базе");
                             }
                         }
                     }
