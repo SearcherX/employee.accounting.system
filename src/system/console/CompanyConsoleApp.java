@@ -1,15 +1,12 @@
 package system.console;
 
+import system.FileManager;
 import system.report.CompanyReportMaker;
 import system.structure.Department;
 import system.structure.Employee;
 import system.structure.Gender;
 import system.structure.Organization;
 import system.structure.user.AccessLevel;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Scanner;
 
@@ -43,7 +40,7 @@ public class CompanyConsoleApp {
             System.out.print("Введите название файла: ");
             String choice4 = in.next();
 
-            writeReportToFile(choice4, report);
+            FileManager.writeReportToFile(choice4, report);
 
             System.out.println("Отчет записан в файл " + choice4);
         }
@@ -63,7 +60,7 @@ public class CompanyConsoleApp {
             System.out.print("Введите название файла: ");
             String choice4 = in.next();
 
-            writeReportToFile(choice4, report);
+            FileManager.writeReportToFile(choice4, report);
 
             System.out.println("Информация записана в файл " + choice4);
         }
@@ -637,15 +634,6 @@ public class CompanyConsoleApp {
                     }
                 }
             }
-        }
-    }
-
-    //метод записи отчета в файл
-    public void writeReportToFile(String fileName, String report) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
-            bw.write(report);
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 
