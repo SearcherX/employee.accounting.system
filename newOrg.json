@@ -1,0 +1,1 @@
+{"name":"Тестовая организация","departments":[{"name":"IT-отдел","employees":[{"account":{"login":"root","password":"123","accessLevel":"ADMIN"},"birthDate":"25.07.2022","gender":"MALE","contactNumber":"111111","position":"админ","employmentDate":"25.07.2022","salary":200000,"fio":"Админ"}]}]}

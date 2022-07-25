@@ -121,21 +121,82 @@ public class OrganizationTest {
 
     @Test
     public void getTop10ExpensiveEmployees() {
+        ArrayList<Employee> res = org.getTop10ExpensiveEmployees();
+        assertEquals(res.size(), 9);
+        assertEquals(res.get(0).getFIO(), "Васильев Николай Алексеевич");
+        assertEquals(res.get(0).getSalary(), 150000);
+        assertEquals(res.get(1).getFIO(), "Володин Дмитрий Сергеевич");
+        assertEquals(res.get(1).getSalary(), 130000);
+        assertEquals(res.get(2).getFIO(), "Фролова Елена Петровна");
+        assertEquals(res.get(2).getSalary(), 130000);
+        assertEquals(res.get(3).getFIO(), "Мельников Андрей Генадьевич");
+        assertEquals(res.get(3).getSalary(), 70000);
+        assertEquals(res.get(4).getFIO(), "Топоров Сергей Никиолаевич");
+        assertEquals(res.get(4).getSalary(), 70000);
+        assertEquals(res.get(5).getFIO(), "Морозова Елена Васильевна");
+        assertEquals(res.get(5).getSalary(), 55000);
+        assertEquals(res.get(6).getFIO(), "Антонов Сергей Дмитриевич");
+        assertEquals(res.get(6).getSalary(), 50000);
+        assertEquals(res.get(7).getFIO(), "Дружкова Ольга Генадьевна");
+        assertEquals(res.get(7).getSalary(), 50000);
+        assertEquals(res.get(8).getFIO(), "Прокопенко Оксана Серьгеевна");
+        assertEquals(res.get(8).getSalary(), 50000);
     }
 
     @Test
     public void getTop10LoyalEmployees() {
+        ArrayList<Employee> res = org.getTop10LoyalEmployees();
+        assertEquals(res.size(), 9);
+        assertEquals(res.get(0).getFIO(), "Володин Дмитрий Сергеевич");
+        assertEquals(res.get(0).getEmploymentDate().format(Employee.FORMATTER), "25.03.2014");
+        assertEquals(res.get(1).getFIO(), "Дружкова Ольга Генадьевна");
+        assertEquals(res.get(1).getEmploymentDate().format(Employee.FORMATTER), "23.03.2015");
+        assertEquals(res.get(2).getFIO(), "Васильев Николай Алексеевич");
+        assertEquals(res.get(2).getEmploymentDate().format(Employee.FORMATTER), "30.07.2015");
+        assertEquals(res.get(3).getFIO(), "Морозова Елена Васильевна");
+        assertEquals(res.get(3).getEmploymentDate().format(Employee.FORMATTER), "23.08.2017");
+        assertEquals(res.get(4).getFIO(), "Мельников Андрей Генадьевич");
+        assertEquals(res.get(4).getEmploymentDate().format(Employee.FORMATTER), "15.02.2018");
+        assertEquals(res.get(5).getFIO(), "Прокопенко Оксана Серьгеевна");
+        assertEquals(res.get(5).getEmploymentDate().format(Employee.FORMATTER), "25.03.2018");
+        assertEquals(res.get(6).getFIO(), "Топоров Сергей Никиолаевич");
+        assertEquals(res.get(6).getEmploymentDate().format(Employee.FORMATTER), "13.05.2018");
+        assertEquals(res.get(7).getFIO(), "Фролова Елена Петровна");
+        assertEquals(res.get(7).getEmploymentDate().format(Employee.FORMATTER), "25.08.2018");
+        assertEquals(res.get(8).getFIO(), "Антонов Сергей Дмитриевич");
+        assertEquals(res.get(8).getEmploymentDate().format(Employee.FORMATTER), "24.02.2019");
+
     }
 
     @Test
     public void getEmployeesMapByFIO() {
+        HashMap<String, ArrayList<Employee>> res = org.getEmployeesMapByFIO("Прокопенко Оксана Серьгеевна");
+        assertEquals(res.size(), 1);
+        assertEquals(res.get("Отдел кадров").size(), 1);
+        assertEquals(res.get("Отдел кадров").get(0).getFIO(), "Прокопенко Оксана Серьгеевна");
+        assertEquals(res.get("Отдел кадров").get(0).getAccount().getLogin(), "prank");
     }
 
     @Test
     public void getEmployeesMapByPosition() {
+        HashMap<String, ArrayList<Employee>> res = org.getEmployeesMapByPosition("начальник");
+        assertEquals(res.size(), 2);
+        assertEquals(res.get("IT-отдел").size(), 1);
+        assertEquals(res.get("Отдел кадров").size(), 1);
+        assertEquals(res.get("IT-отдел").get(0).getFIO(), "Володин Дмитрий Сергеевич");
+        assertEquals(res.get("IT-отдел").get(0).getAccount().getLogin(), "VolodinDS");
+        assertEquals(res.get("Отдел кадров").get(0).getFIO(), "Фролова Елена Петровна");
+        assertEquals(res.get("Отдел кадров").get(0).getAccount().getLogin(), "FrolovaEP");
     }
 
     @Test
     public void getEmployeesMapByDepartment() {
+        HashMap<String, ArrayList<Employee>> res = org.getEmployeesMapByDepartment("Отдел продаж");
+        assertEquals(res.size(), 1);
+        assertEquals(res.get("Отдел продаж").size(), 2);
+        assertEquals(res.get("Отдел продаж").get(0).getFIO(), "Васильев Николай Алексеевич");
+        assertEquals(res.get("Отдел продаж").get(0).getAccount().getLogin(), "VasilievNA");
+        assertEquals(res.get("Отдел продаж").get(1).getFIO(), "Морозова Елена Васильевна");
+        assertEquals(res.get("Отдел продаж").get(1).getAccount().getLogin(), "MorozovaEV");
     }
 }

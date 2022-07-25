@@ -1,5 +1,6 @@
 package system.structure;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -103,6 +104,7 @@ public class Organization {
     }
 
     //метод получения списка средних зарплат по отделам
+    @JsonIgnore
     public HashMap<String, Integer> getAverageSalaryMap() {
         HashMap<String, Integer> avgMap = new HashMap<>();
 
@@ -125,6 +127,7 @@ public class Organization {
     }
 
     //метод нахождения топ-10 самых дорогих сотрудников по зарплате
+    @JsonIgnore
     public ArrayList<Employee> getTop10ExpensiveEmployees() {
         return departments.stream()
                 .flatMap(department -> department.getEmployees().stream())
@@ -133,6 +136,7 @@ public class Organization {
     }
 
     //метод нахождения топ-10 самых преданных сотрудников по количеству лет работы в организации
+    @JsonIgnore
     public ArrayList<Employee> getTop10LoyalEmployees() {
         return departments.stream()
                 .flatMap(department -> department.getEmployees().stream())

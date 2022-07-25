@@ -26,7 +26,7 @@ public record CompanyReportMaker(Organization org) {
 
     //метод создания отчета о средней зарплате по организации
     public String createReportAverageSalary() {
-        return "Средняя зарплата по органищации - " + org.calcAverageSalary();
+        return "Средняя зарплата по организации - " + org.calcAverageSalary();
     }
 
     //метод создания отчета о ТОП-10 самых дорогих сотрудников
