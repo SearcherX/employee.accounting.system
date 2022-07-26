@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 public class OrganizationSynchronizer extends Thread {
     // интервал ожидания
-    private final static int waitIntervalMS = 5000;
+    private final static int WAIT_INTERVAL_MS = 5000;
     //имя файла, ассоциированного с данным синхронизатором
     private final String fileName;
     //организация, которую будем синхронизировать
@@ -61,7 +61,7 @@ public class OrganizationSynchronizer extends Thread {
             FileManager.saveJSON(fileName, organization);
             // 2. подождать определенное время
             try {
-                Thread.sleep(waitIntervalMS);
+                Thread.sleep(WAIT_INTERVAL_MS);
             } catch (InterruptedException ex) {
                 // если мы попали в этот код, то поток прервали из вне через interrupt
                 interrupt();    // установим флаг interrupt для потока еще раз
