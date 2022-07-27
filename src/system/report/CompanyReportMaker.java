@@ -59,6 +59,9 @@ public record CompanyReportMaker(Organization org) {
 
     //метод создания отчета вывода сотрудников из словаря
     public String createReportEmployees(HashMap<String, ArrayList<Employee>> info, AccessLevel access) {
+        if (info == null)
+            return null;
+
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, ArrayList<Employee>> pair : info.entrySet()) {
             sb.append(pair.getKey()).append(":").append("\n");
